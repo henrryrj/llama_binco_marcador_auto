@@ -217,7 +217,7 @@ export default function Bingo() {
   }
 
   function resetResetCount() {
-    setResetCount(0);
+    setResetCount(1);
   }
 
   function handleCartonChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -251,12 +251,12 @@ export default function Bingo() {
                 value={cartonNumber}
                 onChange={(e) => setCartonNumber(e.target.value.toUpperCase())}
                 className="w-20 text-center"
-                placeholder="001"
+                placeholder="0001"
               />
             </div>
           </div>
 
-          {/* Sección ajustada para responsividad */}
+          {/* Sección ajustada para responsiva */}
           <div className="flex flex-wrap md:flex-nowrap justify-between mt-2">
             <div className="flex items-center space-x-2 w-full md:w-auto">
               <span className="text-lg font-semibold">Fecha:</span>
@@ -271,27 +271,35 @@ export default function Bingo() {
               <span className="text-lg font-semibold">Costo:</span>
               <Input
                 value={cartonCost.toString()}
-                onChange={(e) => setCartonCost(parseInt(e.target.value) || 0)}
+                onChange={(e) => setCartonCost(parseInt(e.target.value))}
                 className="w-full md:w-20"
                 type="number"
+                placeholder="$"
               />
               <span className="text-lg font-semibold">Ganancia:</span>
               <Input
                 value={cartonGain.toString()}
-                onChange={(e) => setCartonGain(parseInt(e.target.value) || 0)}
+                onChange={(e) => setCartonGain(parseInt(e.target.value))}
                 className="w-full md:w-20"
                 type="number"
+                placeholder="$"
               />
             </div>
           </div>
         </CardHeader>
         <CardContent>
+          {/* Número de cartón */}
+          <div className="flex items-center space-x-2 w-full md:w-auto justify-end mb-2">
+            <span className="text-lg font-light">{`${
+              cartonNumber === "" ? "" : `#${cartonNumber}`
+            }`}</span>
+          </div>
           <div className="grid grid-cols-5 gap-2">
             {gridData.map((row, rowIndex) =>
               row.map((cell, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`p-4 text-center border-2 border-gray-300 rounded h-16 flex items-center justify-center ${
+                  className={`p-0 text-center border-2 border-gray-300 rounded h-16 flex items-center justify-center ${
                     cell.marked && rowIndex !== 0 ? "bg-green-200" : "bg-white"
                   }`}
                   onClick={() => toggleCell(rowIndex, colIndex)}
@@ -304,15 +312,20 @@ export default function Bingo() {
                     </div>
                   ) : isEditing ? (
                     <Input
-                      value={cell.value || ""} // Permite borrar valores completamente
-                      onChange={(e) =>
-                        handleGridValueChange(
-                          rowIndex,
-                          colIndex,
-                          e.target.value
-                        )
-                      }
-                      className="w-full h-full text-center"
+                      value={cell.value || ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (
+                          value === "" ||
+                          (Number(value) >= 0 && Number(value) <= 99)
+                        ) {
+                          handleGridValueChange(rowIndex, colIndex, value);
+                        }
+                      }}
+                      type="number"
+                      max={99} // Esto solo afecta la flecha del input, pero no previene la entrada manual
+                      min={0}
+                      className="w-full h-full text-center m-0 p-0"
                     />
                   ) : (
                     <span>{cell.value}</span>
@@ -323,7 +336,7 @@ export default function Bingo() {
           </div>
           <div className="mt-4 flex justify-center">
             <Button onClick={resetGrid} variant="outline">
-              Limpiar
+              Limpiar Cartón
             </Button>
           </div>
         </CardContent>
@@ -354,7 +367,7 @@ export default function Bingo() {
                 <Plus className="mr-2 h-4 w-4" /> Add Jugada
               </Button>
               <Button variant="outline" onClick={resetResetCount}>
-                <RefreshCw className="mr-2 h-4 w-4" /> Limpiar
+                <RefreshCw className="mr-2 h-4 w-4" /> Limpiar Jugadas
               </Button>
             </div>
           </div>
@@ -365,7 +378,7 @@ export default function Bingo() {
             {plays.map((play, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <Checkbox
-                  id={`play-${index}`}
+                  id={`play-${resetCount}`}
                   checked={play.completed}
                   onCheckedChange={() => togglePlayCompletion(index)}
                 />
