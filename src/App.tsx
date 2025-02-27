@@ -18,7 +18,7 @@ export default function Bingo() {
   const [plays, setPlays] = useState<
     Array<{ name: string; points: number; completed: boolean }>
   >(initializePlays());
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [bingoTitle, setBingoTitle] = useState("BINGO");
   const [cartonNumber, setCartonNumber] = useState("");
   const [resetCount, setResetCount] = useState(1);
@@ -223,133 +223,143 @@ export default function Bingo() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white p-4">
-      <Card className="w-full max-w-3xl mx-auto mt-8">
-        <CardHeader>
-          <div className="flex flex-wrap md:flex-nowrap justify-between items-center text-center md:text-left">
-            {/* Título del bingo */}
-            <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start mb-2 md:mb-0">
-              {isEditing ? (
+      {/* Contenedor principal ajustado para diferentes tamaños de pantalla */}
+      <div className="flex flex-col md:flex-row gap-4 w-full max-w-6xl mx-auto ">
+        {/* Card del Bingo */}
+        <Card className="w-full">
+          <CardHeader className="">
+            <div className="flex flex-wrap md:flex-nowrap justify-between items-center text-center md:text-left">
+              {/* Título del bingo */}
+              <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start mb-2 md:mb-0">
+                {isEditing ? (
+                  <Input
+                    value={bingoTitle}
+                    onChange={(e) =>
+                      setBingoTitle(e.target.value.toUpperCase())
+                    }
+                    className="w-full text-2xl font-bold text-center"
+                  />
+                ) : (
+                  <CardTitle className="text-2xl font-bold w-full">
+                    {bingoTitle}
+                  </CardTitle>
+                )}
+              </div>
+
+              {/* Número de cartón */}
+              <div className="flex items-center space-x-2 w-full md:w-auto md:justify-end">
+                <span className="text-lg font-semibold">
+                  #{selectedCarton}:
+                </span>
                 <Input
-                  value={bingoTitle}
-                  onChange={(e) => setBingoTitle(e.target.value.toUpperCase())}
-                  className="w-full text-2xl font-bold text-center"
+                  value={cartonNumber}
+                  onChange={(e) =>
+                    setCartonNumber(e.target.value.toUpperCase())
+                  }
+                  className="w-20 text-center"
+                  placeholder="0001"
                 />
-              ) : (
-                <CardTitle className="text-2xl font-bold w-full">
-                  {bingoTitle}
-                </CardTitle>
+              </div>
+            </div>
+
+            {/* Sección ajustada para responsiva */}
+            <div className="flex flex-wrap md:flex-nowrap justify-between mt-2 mb-0">
+              <div className="flex items-center space-x-2 w-full md:w-auto">
+                <span className="text-lg font-semibold">Fecha:</span>
+                <Input
+                  value={currentDate}
+                  onChange={(e) => setCurrentDate(e.target.value)}
+                  className="sm:w-auto md:w-40"
+                  type="date"
+                />
+              </div>
+              <div className="flex items-center space-x-2 w-full md:w-auto mt-2 md:mt-0">
+                <span className="text-lg font-semibold">Costo:</span>
+                <Input
+                  value={cartonCost.toString()}
+                  onChange={(e) => setCartonCost(parseInt(e.target.value))}
+                  className="w-full md:w-20"
+                  type="number"
+                  placeholder="$"
+                />
+                <span className="text-lg font-semibold">Ganancia:</span>
+                <Input
+                  value={cartonGain.toString()}
+                  onChange={(e) => setCartonGain(parseInt(e.target.value))}
+                  className="w-full md:w-20"
+                  type="number"
+                  placeholder="$"
+                />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {/* Número de cartón */}
+            <div className="flex items-center space-x-2 w-full md:w-auto justify-end mb-0">
+              <span className="text-lg font-semibold">{`${
+                cartonNumber === "" ? "" : `#${cartonNumber}`
+              }`}</span>
+            </div>
+            <div className="grid grid-cols-5 gap-2">
+              {gridData.map((row, rowIndex) =>
+                row.map((cell, colIndex) => (
+                  <div
+                    key={`${rowIndex}-${colIndex}`}
+                    className={`aspect-[3/2] text-center border-2 border-gray-300 rounded flex items-center justify-center lg:text-3xl  ${
+                      cell.marked && rowIndex !== 0
+                        ? "bg-green-200"
+                        : "bg-white"
+                    }`}
+                    onClick={() => toggleCell(rowIndex, colIndex)}
+                  >
+                    {rowIndex === 0 ? (
+                      <span className="text-lg font-bold lg:text-3xl">
+                        {cell.value}
+                      </span>
+                    ) : cell.value === "STAR" ? (
+                      <div className="flex items-center justify-center">
+                        <Star className="xs:h-6 xs:w-6 sm:h-12 sm:w-12 md:h-14 md:w-14 text-yellow-500 " />
+                      </div>
+                    ) : isEditing ? (
+                      <Input
+                        value={cell.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (
+                            value === "" ||
+                            (Number(value) >= 0 && Number(value) <= 99)
+                          ) {
+                            handleGridValueChange(rowIndex, colIndex, value);
+                          }
+                        }}
+                        type="number"
+                        max={99}
+                        min={0}
+                        className="w-full h-full text-center m-0 p-0"
+                      />
+                    ) : (
+                      <span>{cell.value}</span>
+                    )}
+                  </div>
+                ))
               )}
             </div>
-
-            {/* Número de cartón */}
-            <div className="flex items-center space-x-2 w-full md:w-auto md:justify-end">
-              <span className="text-lg font-semibold">#{selectedCarton}:</span>
-              <Input
-                value={cartonNumber}
-                onChange={(e) => setCartonNumber(e.target.value.toUpperCase())}
-                className="w-20 text-center"
-                placeholder="0001"
-              />
+            <div className="mt-4 flex justify-center">
+              <Button onClick={resetGrid} variant="outline">
+                <Trash className="h-4 w-4" />
+                Limpiar Cartón
+              </Button>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* Sección ajustada para responsiva */}
-          <div className="flex flex-wrap md:flex-nowrap justify-between mt-2">
-            <div className="flex items-center space-x-2 w-full md:w-auto">
-              <span className="text-lg font-semibold">Fecha:</span>
-              <Input
-                value={currentDate}
-                onChange={(e) => setCurrentDate(e.target.value)}
-                className="sm:w-auto md:w-40"
-                type="date"
-              />
-            </div>
-            <div className="flex items-center space-x-2 w-full md:w-auto mt-2 md:mt-0">
-              <span className="text-lg font-semibold">Costo:</span>
-              <Input
-                value={cartonCost.toString()}
-                onChange={(e) => setCartonCost(parseInt(e.target.value))}
-                className="w-full md:w-20"
-                type="number"
-                placeholder="$"
-              />
-              <span className="text-lg font-semibold">Ganancia:</span>
-              <Input
-                value={cartonGain.toString()}
-                onChange={(e) => setCartonGain(parseInt(e.target.value))}
-                className="w-full md:w-20"
-                type="number"
-                placeholder="$"
-              />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {/* Número de cartón */}
-          <div className="flex items-center space-x-2 w-full md:w-auto justify-end mb-2">
-            <span className="text-lg font-light">{`${
-              cartonNumber === "" ? "" : `#${cartonNumber}`
-            }`}</span>
-          </div>
-          <div className="grid grid-cols-5 gap-2">
-            {gridData.map((row, rowIndex) =>
-              row.map((cell, colIndex) => (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`aspect-square text-center border-2 border-gray-300 rounded flex items-center justify-center ${
-                    cell.marked && rowIndex !== 0 ? "bg-green-200" : "bg-white"
-                  }`}
-                  onClick={() => toggleCell(rowIndex, colIndex)}
-                >
-                  {rowIndex === 0 ? (
-                    <span className="text-lg font-bold">{cell.value}</span>
-                  ) : cell.value === "STAR" ? (
-                    <div className="flex items-center justify-center h-full w-full">
-                      <Star className="h-10 w-10 text-yellow-500" />
-                    </div>
-                  ) : isEditing ? (
-                    <Input
-                      value={cell.value || ""}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (
-                          value === "" ||
-                          (Number(value) >= 0 && Number(value) <= 99)
-                        ) {
-                          handleGridValueChange(rowIndex, colIndex, value);
-                        }
-                      }}
-                      type="number"
-                      max={99} // Esto solo afecta la flecha del input, pero no previene la entrada manual
-                      min={0}
-                      className="w-full h-full text-center m-0 p-0"
-                    />
-                  ) : (
-                    <span>{cell.value}</span>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-          <div className="mt-4 flex justify-center">
-            <Button onClick={resetGrid} variant="outline">
-              <Trash className="h-4 w-4" />
-              Limpiar Cartón
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="w-full max-w-3xl mx-auto mt-8">
-        <CardHeader>
-          <div className="flex flex-wrap md:flex-nowrap justify-between items-center">
-            {/* Título de la jugada */}
-            <CardTitle className="text-2xl font-bold w-full md:w-auto mb-2 md:mb-0 text-center">
+        {/* Card de Jugadas */}
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">
               JUGADA #{resetCount}
             </CardTitle>
-
-            {/* Botones, alineados en una fila debajo en pantallas pequeñas */}
-            <div className="flex flex-wrap justify-center md:justify-end items-center w-full md:w-auto gap-2">
+            <div className="flex flex-wrap justify-center items-center gap-2 mt-2">
               <Button
                 variant="outline"
                 onClick={() => setIsEditing(!isEditing)}
@@ -362,73 +372,67 @@ export default function Bingo() {
                 onClick={addPlay}
                 disabled={plays.length >= 15}
               >
-                <Plus className="h-4 w-4" />
-                Jugadas
+                <Plus className="h-4 w-4" /> Jugadas
               </Button>
               <Button variant="outline" onClick={resetResetCount}>
                 <RefreshCw className="h-4 w-4" /> Restaurar Jugadas
               </Button>
             </div>
-          </div>
-          <span className="text-red-400 text-center">{`${
-            plays.length === 0 ? "No hay jugadas registradas" : ""
-          }`}</span>
-        </CardHeader>
-
-        <CardContent>
-          <div className="space-y-2">
-            {plays.map((play, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`play-${resetCount}`}
-                  checked={play.completed}
-                  onCheckedChange={() => togglePlayCompletion(index)}
-                />
-                {isEditing ? (
-                  <>
-                    <Input
-                      value={play.name}
-                      onChange={(e) =>
-                        handlePlayChange(
-                          index,
-                          "name",
-                          e.target.value.toUpperCase()
-                        )
-                      }
-                      className="w-32"
-                    />
-                    <Input
-                      type="number"
-                      value={play.points.toString()}
-                      onChange={(e) =>
-                        handlePlayChange(
-                          index,
-                          "points",
-                          parseInt(e.target.value) || 0
-                        )
-                      }
-                      className="w-20"
-                    />
-                    <Button variant="outline" onClick={() => removePlay(index)}>
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Label htmlFor={`play-${index}`}>
-                      {play.completed ? "✅" : ""}
-                    </Label>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {plays.map((play, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`play-${resetCount}`}
+                    checked={play.completed}
+                    onCheckedChange={() => togglePlayCompletion(index)}
+                  />
+                  {isEditing ? (
+                    <>
+                      <Input
+                        value={play.name}
+                        onChange={(e) =>
+                          handlePlayChange(
+                            index,
+                            "name",
+                            e.target.value.toUpperCase()
+                          )
+                        }
+                        className="w-32"
+                      />
+                      <Input
+                        type="number"
+                        value={play.points.toString()}
+                        onChange={(e) =>
+                          handlePlayChange(
+                            index,
+                            "points",
+                            parseInt(e.target.value) || 0
+                          )
+                        }
+                        className="w-20"
+                      />
+                      <Button
+                        variant="outline"
+                        onClick={() => removePlay(index)}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
                     <span>
                       {play.name} ({play.points} BS)
                     </span>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
+      {/* Card de Selección de Cartón (Siempre Abajo) */}
       <Card className="w-full max-w-3xl mx-auto mt-8">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
