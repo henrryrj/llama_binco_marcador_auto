@@ -1,88 +1,97 @@
-import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Pencil, Star, Plus, Trash, RefreshCw } from "lucide-react"
-import { format } from 'date-fns'
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Pencil, Star, Plus, Trash, RefreshCw } from "lucide-react";
+import { format } from "date-fns";
 
 export default function Bingo() {
-  const [gridData, setGridData] = useState<Array<Array<{ value: number | string; marked: boolean }>>>(initializeGridData())
-  const [plays, setPlays] = useState<Array<{ name: string; points: number; completed: boolean }>>(initializePlays())
-  const [isEditing, setIsEditing] = useState(false)
-  const [bingoTitle, setBingoTitle] = useState("BINGO")
-  const [cartonNumber, setCartonNumber] = useState("")
-  const [resetCount, setResetCount] = useState(1)
-  const [cartonCost, setCartonCost] = useState(20) // Default cost
-  const [cartonGain, setCartonGain] = useState(0) // Default gain
-  const [currentDate, setCurrentDate] = useState(format(new Date(), 'yyyy-MM-dd'))
+  const [gridData, setGridData] = useState<
+    Array<Array<{ value: number | string; marked: boolean }>>
+  >(initializeGridData());
+  const [plays, setPlays] = useState<
+    Array<{ name: string; points: number; completed: boolean }>
+  >(initializePlays());
+  const [isEditing, setIsEditing] = useState(false);
+  const [bingoTitle, setBingoTitle] = useState("BINGO");
+  const [cartonNumber, setCartonNumber] = useState("");
+  const [resetCount, setResetCount] = useState(1);
+  const [cartonCost, setCartonCost] = useState(20); // Default cost
+  const [cartonGain, setCartonGain] = useState(0); // Default gain
+  const [currentDate, setCurrentDate] = useState(
+    format(new Date(), "yyyy-MM-dd")
+  );
 
   useEffect(() => {
-    const savedGridData = localStorage.getItem('bingoGridData')
-    const savedPlays = localStorage.getItem('bingoPlays')
-    const savedTitle = localStorage.getItem('bingoTitle')
-    const savedCarton = localStorage.getItem('bingoCarton')
-    const savedResetCount = localStorage.getItem('bingoResetCount')
-    const savedCartonCost = localStorage.getItem('bingoCartonCost')
-    const savedCartonGain = localStorage.getItem('bingoCartonGain')
-    const savedCurrentDate = localStorage.getItem('bingoCurrentDate')
+    const savedGridData = localStorage.getItem("bingoGridData");
+    const savedPlays = localStorage.getItem("bingoPlays");
+    const savedTitle = localStorage.getItem("bingoTitle");
+    const savedCarton = localStorage.getItem("bingoCarton");
+    const savedResetCount = localStorage.getItem("bingoResetCount");
+    const savedCartonCost = localStorage.getItem("bingoCartonCost");
+    const savedCartonGain = localStorage.getItem("bingoCartonGain");
+    const savedCurrentDate = localStorage.getItem("bingoCurrentDate");
 
-    if (savedGridData) setGridData(JSON.parse(savedGridData))
-    if (savedPlays) setPlays(JSON.parse(savedPlays))
-    if (savedTitle) setBingoTitle(savedTitle)
-    if (savedCarton) setCartonNumber(savedCarton)
-    if (savedResetCount) setResetCount(parseInt(savedResetCount, 10))
-    if (savedCartonCost) setCartonCost(parseInt(savedCartonCost, 10))
-    if (savedCartonGain) setCartonGain(parseInt(savedCartonGain, 10))
-    if (savedCurrentDate) setCurrentDate(savedCurrentDate)
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem('bingoGridData', JSON.stringify(gridData))
-  }, [gridData])
+    if (savedGridData) setGridData(JSON.parse(savedGridData));
+    if (savedPlays) setPlays(JSON.parse(savedPlays));
+    if (savedTitle) setBingoTitle(savedTitle);
+    if (savedCarton) setCartonNumber(savedCarton);
+    if (savedResetCount) setResetCount(parseInt(savedResetCount, 10));
+    if (savedCartonCost) setCartonCost(parseInt(savedCartonCost, 10));
+    if (savedCartonGain) setCartonGain(parseInt(savedCartonGain, 10));
+    if (savedCurrentDate) setCurrentDate(savedCurrentDate);
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem('bingoPlays', JSON.stringify(plays))
-  }, [plays])
+    localStorage.setItem("bingoGridData", JSON.stringify(gridData));
+  }, [gridData]);
 
   useEffect(() => {
-    localStorage.setItem('bingoTitle', bingoTitle)
-  }, [bingoTitle])
+    localStorage.setItem("bingoPlays", JSON.stringify(plays));
+  }, [plays]);
 
   useEffect(() => {
-    localStorage.setItem('bingoCarton', cartonNumber)
-  }, [cartonNumber])
+    localStorage.setItem("bingoTitle", bingoTitle);
+  }, [bingoTitle]);
 
   useEffect(() => {
-    localStorage.setItem('bingoResetCount', resetCount.toString())
-  }, [resetCount])
+    localStorage.setItem("bingoCarton", cartonNumber);
+  }, [cartonNumber]);
 
   useEffect(() => {
-    localStorage.setItem('bingoCartonCost', cartonCost.toString())
-  }, [cartonCost])
+    localStorage.setItem("bingoResetCount", resetCount.toString());
+  }, [resetCount]);
 
   useEffect(() => {
-    localStorage.setItem('bingoCartonGain', cartonGain.toString())
-  }, [cartonGain])
+    localStorage.setItem("bingoCartonCost", cartonCost.toString());
+  }, [cartonCost]);
 
   useEffect(() => {
-    localStorage.setItem('bingoCurrentDate', currentDate)
-  }, [currentDate])
+    localStorage.setItem("bingoCartonGain", cartonGain.toString());
+  }, [cartonGain]);
+
+  useEffect(() => {
+    localStorage.setItem("bingoCurrentDate", currentDate);
+  }, [currentDate]);
 
   function initializeGridData() {
-    const letters = ['B', 'I', 'N', 'G', 'O']
-    const rows = 6
-    const cols = 5
+    const letters = ["B", "I", "N", "G", "O"];
+    const rows = 6;
+    const cols = 5;
     const gridData = Array.from({ length: rows }, (_, rowIndex) =>
       Array.from({ length: cols }, (_, colIndex) => ({
-        value: rowIndex === 0 ? letters[colIndex] : (colIndex * 15) + (rowIndex - 1) * 5 + 1,
+        value:
+          rowIndex === 0
+            ? letters[colIndex]
+            : colIndex * 15 + (rowIndex - 1) * 5 + 1,
         marked: rowIndex === 0, // Mark the first row as already marked (for labels)
       }))
-    )
+    );
     // Set the center cell to a star and make it selectable
-    gridData[3][2] = { value: 'STAR', marked: false }
-    return gridData
+    gridData[3][2] = { value: "STAR", marked: false };
+    return gridData;
   }
 
   function initializePlays() {
@@ -96,115 +105,149 @@ export default function Bingo() {
       { name: "FIGURA", points: 800, completed: false },
       { name: "LLENA", points: 1000, completed: false },
       { name: "CONSUELO", points: 1000, completed: false },
-
-    ]
+    ];
   }
 
   function toggleCell(rowIndex: number, colIndex: number) {
-    if (rowIndex === 0) return // Do not allow marking the header row
+    if (isEditing) return;
+    if (rowIndex === 0) return; // Do not allow marking the header row
     const newGridData = gridData.map((row, rIndex) =>
       row.map((cell, cIndex) =>
-        rIndex === rowIndex && cIndex === colIndex ? { ...cell, marked: !cell.marked } : cell
+        rIndex === rowIndex && cIndex === colIndex
+          ? { ...cell, marked: !cell.marked }
+          : cell
       )
-    )
-    setGridData(newGridData)
+    );
+    setGridData(newGridData);
   }
 
   function resetGrid() {
-    setGridData(initializeGridData())
-    setPlays(initializePlays())
-    setBingoTitle("BINGO")
-    setCartonNumber("")
-    setResetCount(resetCount + 1)
+    setGridData((prevGrid) =>
+      prevGrid.map((row, rowIndex) =>
+        row.map((cell) => ({
+          ...cell,
+          marked: rowIndex === 0, // Mantiene marcado solo el encabezado
+        }))
+      )
+    );
+    setPlays(plays.map((jugada) => ({ ...jugada, completed: false })));
+    // setBingoTitle("BINGO");
+    // setCartonNumber("");
+    setResetCount(resetCount + 1);
   }
 
   function togglePlayCompletion(index: number) {
     const newPlays = plays.map((play, i) =>
       i === index ? { ...play, completed: !play.completed } : play
-    )
-    setPlays(newPlays)
+    );
+    setPlays(newPlays);
   }
 
-  function handlePlayChange(index: number, field: 'name' | 'points', value: string | number) {
+  function handlePlayChange(
+    index: number,
+    field: "name" | "points",
+    value: string | number
+  ) {
     const newPlays = plays.map((play, i) =>
-      i === index ? { ...play, [field]: field === 'points' ? parseInt(value as string, 10) || 0 : value } : play
-    )
-    setPlays(newPlays)
+      i === index
+        ? {
+            ...play,
+            [field]:
+              field === "points" ? parseInt(value as string, 10) || 0 : value,
+          }
+        : play
+    );
+    setPlays(newPlays);
   }
 
-  function handleGridValueChange(rowIndex: number, colIndex: number, value: string) {
-    if (rowIndex === 0) return // Do not allow editing the header row
+  function handleGridValueChange(
+    rowIndex: number,
+    colIndex: number,
+    value: string
+  ) {
+    if (rowIndex === 0) return; // No permitir edición en la fila de encabezado
+
     const newGridData = gridData.map((row, rIndex) =>
       row.map((cell, cIndex) =>
-        rIndex === rowIndex && cIndex === colIndex ? { ...cell, value: parseInt(value, 10) || cell.value } : cell
+        rIndex === rowIndex && cIndex === colIndex
+          ? { ...cell, value: value === "" ? "" : parseInt(value, 10) || 0 }
+          : cell
       )
-    )
-    setGridData(newGridData)
+    );
+
+    setGridData(newGridData);
   }
 
   function addPlay() {
-    if (plays.length >= 15) return // Limit to 15 plays
-    setPlays([...plays, { name: "", points: 0, completed: false }])
+    if (plays.length >= 15) return; // Limit to 15 plays
+    setPlays([...plays, { name: "", points: 0, completed: false }]);
   }
 
   function removePlay(index: number) {
-    const newPlays = plays.filter((_, i) => i !== index)
-    setPlays(newPlays)
+    const newPlays = plays.filter((_, i) => i !== index);
+    setPlays(newPlays);
   }
 
   function resetResetCount() {
-    setResetCount(0)
+    setResetCount(0);
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-white p-4">
       <Card className="w-full max-w-3xl mx-auto mt-8">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap md:flex-nowrap justify-between items-center text-center md:text-left">
+            {/* Título del bingo */}
+            <div className="flex items-center space-x-2 w-full md:w-auto justify-center md:justify-start mb-2 md:mb-0">
               {isEditing ? (
                 <Input
                   value={bingoTitle}
                   onChange={(e) => setBingoTitle(e.target.value.toUpperCase())}
-                  className="w-full text-2xl font-bold"
+                  className="w-full text-2xl font-bold text-center"
                 />
               ) : (
-                <CardTitle className="text-2xl font-bold">{bingoTitle}</CardTitle>
+                <CardTitle className="text-2xl font-bold w-full">
+                  {bingoTitle}
+                </CardTitle>
               )}
             </div>
-            <div className="flex items-center space-x-2">
+
+            {/* Número de cartón */}
+            <div className="flex items-center space-x-2 w-full md:w-auto  md:justify-end">
               <span className="text-lg font-semibold">#CARTON:</span>
               <Input
                 value={cartonNumber}
                 onChange={(e) => setCartonNumber(e.target.value.toUpperCase())}
-                className="w-20"
+                className="w-20 text-center"
                 placeholder="001"
               />
             </div>
           </div>
-          <div className="flex justify-between items-center mt-2">
-            <div className="flex items-center space-x-2">
+
+          {/* Sección ajustada para responsividad */}
+          <div className="flex flex-wrap md:flex-nowrap justify-between mt-2">
+            <div className="flex items-center space-x-2 w-full md:w-auto">
               <span className="text-lg font-semibold">Fecha:</span>
               <Input
                 value={currentDate}
                 onChange={(e) => setCurrentDate(e.target.value)}
-                className="w-40"
+                className="sm:w-auto md:w-40"
                 type="date"
               />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 w-full md:w-auto mt-2 md:mt-0">
               <span className="text-lg font-semibold">Costo:</span>
               <Input
                 value={cartonCost.toString()}
                 onChange={(e) => setCartonCost(parseInt(e.target.value) || 0)}
-                className="w-20"
+                className="w-full md:w-20"
                 type="number"
               />
               <span className="text-lg font-semibold">Ganancia:</span>
               <Input
                 value={cartonGain.toString()}
                 onChange={(e) => setCartonGain(parseInt(e.target.value) || 0)}
-                className="w-20"
+                className="w-full md:w-20"
                 type="number"
               />
             </div>
@@ -216,27 +259,31 @@ export default function Bingo() {
               row.map((cell, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`p-4 text-center border-2 border-gray-300 rounded h-16 ${
-                    cell.marked && rowIndex !== 0 ? 'bg-red-100' : 'bg-white'
+                  className={`p-4 text-center border-2 border-gray-300 rounded h-16 flex items-center justify-center ${
+                    cell.marked && rowIndex !== 0 ? "bg-red-100" : "bg-white"
                   }`}
                   onClick={() => toggleCell(rowIndex, colIndex)}
                 >
                   {rowIndex === 0 ? (
                     <span className="text-lg font-bold">{cell.value}</span>
-                  ) : cell.value === 'STAR' ? (
+                  ) : cell.value === "STAR" ? (
                     <div className="flex items-center justify-center h-full w-full">
                       <Star className="h-10 w-10 text-yellow-500" />
                     </div>
+                  ) : isEditing ? (
+                    <Input
+                      value={cell.value || ""} // Permite borrar valores completamente
+                      onChange={(e) =>
+                        handleGridValueChange(
+                          rowIndex,
+                          colIndex,
+                          e.target.value
+                        )
+                      }
+                      className="w-full h-full text-center "
+                    />
                   ) : (
-                    isEditing ? (
-                      <Input
-                        value={cell.value.toString()}
-                        onChange={(e) => handleGridValueChange(rowIndex, colIndex, e.target.value)}
-                        className="w-full"
-                      />
-                    ) : (
-                      <span>{cell.value}</span>
-                    )
+                    <span>{cell.value}</span>
                   )}
                 </div>
               ))
@@ -252,15 +299,26 @@ export default function Bingo() {
 
       <Card className="w-full max-w-3xl mx-auto mt-8">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-2xl font-bold">
+          <div className="flex flex-wrap md:flex-nowrap justify-between items-center ">
+            {/* Título de la jugada */}
+            <CardTitle className="text-2xl font-bold w-full md:w-auto mb-2 md:mb-0 text-center">
               JUGADA #{resetCount}
             </CardTitle>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
-                <Pencil className="mr-2 h-4 w-4" /> {isEditing ? 'Guardar' : 'Editar'}
+
+            {/* Botones, alineados en una fila debajo en pantallas pequeñas */}
+            <div className="flex flex-wrap justify-center md:justify-end items-center w-full md:w-auto gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                <Pencil className="mr-2 h-4 w-4" />{" "}
+                {isEditing ? "Guardar" : "Editar"}
               </Button>
-              <Button variant="outline" onClick={addPlay} disabled={plays.length >= 15}>
+              <Button
+                variant="outline"
+                onClick={addPlay}
+                disabled={plays.length >= 15}
+              >
                 <Plus className="mr-2 h-4 w-4" /> Add Jugada
               </Button>
               <Button variant="outline" onClick={resetResetCount}>
@@ -269,6 +327,7 @@ export default function Bingo() {
             </div>
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="space-y-2">
             {plays.map((play, index) => (
@@ -282,13 +341,25 @@ export default function Bingo() {
                   <>
                     <Input
                       value={play.name}
-                      onChange={(e) => handlePlayChange(index, 'name', e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        handlePlayChange(
+                          index,
+                          "name",
+                          e.target.value.toUpperCase()
+                        )
+                      }
                       className="w-32"
                     />
                     <Input
                       type="number"
                       value={play.points.toString()}
-                      onChange={(e) => handlePlayChange(index, 'points', parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handlePlayChange(
+                          index,
+                          "points",
+                          parseInt(e.target.value) || 0
+                        )
+                      }
                       className="w-20"
                     />
                     <Button variant="outline" onClick={() => removePlay(index)}>
@@ -298,9 +369,11 @@ export default function Bingo() {
                 ) : (
                   <>
                     <Label htmlFor={`play-${index}`}>
-                      {play.completed ? '✅' : ''}
+                      {play.completed ? "✅" : ""}
                     </Label>
-                    <span>{play.name} ({play.points} BS)</span>
+                    <span>
+                      {play.name} ({play.points} BS)
+                    </span>
                   </>
                 )}
               </div>
@@ -309,5 +382,5 @@ export default function Bingo() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
