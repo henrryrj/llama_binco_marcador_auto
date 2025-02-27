@@ -8,6 +8,10 @@ import { Pencil, Star, Plus, Trash, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 
 export default function Bingo() {
+  const [selectedCarton, setSelectedCarton] = useState<string>(() => {
+    const savedCarton = localStorage.getItem("selectedCarton");
+    return savedCarton || "Cartón 1";
+  });
   const [gridData, setGridData] = useState<
     Array<Array<{ value: number | string; marked: boolean }>>
   >(initializeGridData());
@@ -25,14 +29,24 @@ export default function Bingo() {
   );
 
   useEffect(() => {
-    const savedGridData = localStorage.getItem("bingoGridData");
-    const savedPlays = localStorage.getItem("bingoPlays");
-    const savedTitle = localStorage.getItem("bingoTitle");
-    const savedCarton = localStorage.getItem("bingoCarton");
-    const savedResetCount = localStorage.getItem("bingoResetCount");
-    const savedCartonCost = localStorage.getItem("bingoCartonCost");
-    const savedCartonGain = localStorage.getItem("bingoCartonGain");
-    const savedCurrentDate = localStorage.getItem("bingoCurrentDate");
+    const savedGridData = localStorage.getItem(
+      `bingoGridData_${selectedCarton}`
+    );
+    const savedPlays = localStorage.getItem(`bingoPlays_${selectedCarton}`);
+    const savedTitle = localStorage.getItem(`bingoTitle_${selectedCarton}`);
+    const savedCarton = localStorage.getItem(`bingoCarton_${selectedCarton}`);
+    const savedResetCount = localStorage.getItem(
+      `bingoResetCount_${selectedCarton}`
+    );
+    const savedCartonCost = localStorage.getItem(
+      `bingoCartonCost_${selectedCarton}`
+    );
+    const savedCartonGain = localStorage.getItem(
+      `bingoCartonGain_${selectedCarton}`
+    );
+    const savedCurrentDate = localStorage.getItem(
+      `bingoCurrentDate_${selectedCarton}`
+    );
 
     if (savedGridData) setGridData(JSON.parse(savedGridData));
     if (savedPlays) setPlays(JSON.parse(savedPlays));
@@ -42,39 +56,55 @@ export default function Bingo() {
     if (savedCartonCost) setCartonCost(parseInt(savedCartonCost, 10));
     if (savedCartonGain) setCartonGain(parseInt(savedCartonGain, 10));
     if (savedCurrentDate) setCurrentDate(savedCurrentDate);
-  }, []);
+  }, [selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoGridData", JSON.stringify(gridData));
-  }, [gridData]);
+    localStorage.setItem(
+      `bingoGridData_${selectedCarton}`,
+      JSON.stringify(gridData)
+    );
+  }, [gridData, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoPlays", JSON.stringify(plays));
-  }, [plays]);
+    localStorage.setItem(`bingoPlays_${selectedCarton}`, JSON.stringify(plays));
+  }, [plays, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoTitle", bingoTitle);
-  }, [bingoTitle]);
+    localStorage.setItem(`bingoTitle_${selectedCarton}`, bingoTitle);
+  }, [bingoTitle, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoCarton", cartonNumber);
-  }, [cartonNumber]);
+    localStorage.setItem(`bingoCarton_${selectedCarton}`, cartonNumber);
+  }, [cartonNumber, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoResetCount", resetCount.toString());
-  }, [resetCount]);
+    localStorage.setItem(
+      `bingoResetCount_${selectedCarton}`,
+      resetCount.toString()
+    );
+  }, [resetCount, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoCartonCost", cartonCost.toString());
-  }, [cartonCost]);
+    localStorage.setItem(
+      `bingoCartonCost_${selectedCarton}`,
+      cartonCost.toString()
+    );
+  }, [cartonCost, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoCartonGain", cartonGain.toString());
-  }, [cartonGain]);
+    localStorage.setItem(
+      `bingoCartonGain_${selectedCarton}`,
+      cartonGain.toString()
+    );
+  }, [cartonGain, selectedCarton]);
 
   useEffect(() => {
-    localStorage.setItem("bingoCurrentDate", currentDate);
-  }, [currentDate]);
+    localStorage.setItem(`bingoCurrentDate_${selectedCarton}`, currentDate);
+  }, [currentDate, selectedCarton]);
+
+  useEffect(() => {
+    localStorage.setItem("selectedCarton", selectedCarton);
+  }, [selectedCarton]);
 
   function initializeGridData() {
     const letters = ["B", "I", "N", "G", "O"];
@@ -131,8 +161,6 @@ export default function Bingo() {
       )
     );
     setPlays(plays.map((jugada) => ({ ...jugada, completed: false })));
-    // setBingoTitle("BINGO");
-    // setCartonNumber("");
     setResetCount(resetCount + 1);
   }
 
@@ -192,6 +220,10 @@ export default function Bingo() {
     setResetCount(0);
   }
 
+  function handleCartonChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    setSelectedCarton(event.target.value);
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white p-4">
       <Card className="w-full max-w-3xl mx-auto mt-8">
@@ -213,8 +245,8 @@ export default function Bingo() {
             </div>
 
             {/* Número de cartón */}
-            <div className="flex items-center space-x-2 w-full md:w-auto  md:justify-end">
-              <span className="text-lg font-semibold">#CARTON:</span>
+            <div className="flex items-center space-x-2 w-full md:w-auto md:justify-end">
+              <span className="text-lg font-semibold">#{selectedCarton}:</span>
               <Input
                 value={cartonNumber}
                 onChange={(e) => setCartonNumber(e.target.value.toUpperCase())}
@@ -260,7 +292,7 @@ export default function Bingo() {
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`p-4 text-center border-2 border-gray-300 rounded h-16 flex items-center justify-center ${
-                    cell.marked && rowIndex !== 0 ? "bg-red-100" : "bg-white"
+                    cell.marked && rowIndex !== 0 ? "bg-green-200" : "bg-white"
                   }`}
                   onClick={() => toggleCell(rowIndex, colIndex)}
                 >
@@ -280,7 +312,7 @@ export default function Bingo() {
                           e.target.value
                         )
                       }
-                      className="w-full h-full text-center "
+                      className="w-full h-full text-center"
                     />
                   ) : (
                     <span>{cell.value}</span>
@@ -299,7 +331,7 @@ export default function Bingo() {
 
       <Card className="w-full max-w-3xl mx-auto mt-8">
         <CardHeader>
-          <div className="flex flex-wrap md:flex-nowrap justify-between items-center ">
+          <div className="flex flex-wrap md:flex-nowrap justify-between items-center">
             {/* Título de la jugada */}
             <CardTitle className="text-2xl font-bold w-full md:w-auto mb-2 md:mb-0 text-center">
               JUGADA #{resetCount}
@@ -378,6 +410,29 @@ export default function Bingo() {
                 )}
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-3xl mx-auto mt-8">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Seleccionar Cartón
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center">
+            <select
+              value={selectedCarton}
+              onChange={handleCartonChange}
+              className="border p-2 rounded"
+            >
+              {Array.from({ length: 10 }, (_, index) => (
+                <option key={index} value={`Cartón ${index + 1}`}>
+                  Cartón {index + 1}
+                </option>
+              ))}
+            </select>
           </div>
         </CardContent>
       </Card>
