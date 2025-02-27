@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Pencil, Star, Plus, Trash, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
@@ -420,9 +421,14 @@ export default function Bingo() {
                       </Button>
                     </>
                   ) : (
-                    <span>
-                      {play.name} ({play.points} BS)
-                    </span>
+                    <>
+                      <Label htmlFor={`play-${index}`}>
+                        {play.completed ? "✅" : ""}
+                      </Label>
+                      <span>
+                        {play.name} ({play.points} BS)
+                      </span>
+                    </>
                   )}
                 </div>
               ))}
