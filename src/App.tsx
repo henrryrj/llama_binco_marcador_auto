@@ -18,11 +18,11 @@ export default function Bingo() {
   const [plays, setPlays] = useState<
     Array<{ name: string; points: number; completed: boolean }>
   >(initializePlays());
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const [bingoTitle, setBingoTitle] = useState("BINGO");
   const [cartonNumber, setCartonNumber] = useState("");
   const [resetCount, setResetCount] = useState(1);
-  const [cartonCost, setCartonCost] = useState(20); // Default cost
+  const [cartonCost, setCartonCost] = useState(0); // Default cost
   const [cartonGain, setCartonGain] = useState(0); // Default gain
   const [currentDate, setCurrentDate] = useState(
     format(new Date(), "yyyy-MM-dd")
@@ -112,10 +112,7 @@ export default function Bingo() {
     const cols = 5;
     const gridData = Array.from({ length: rows }, (_, rowIndex) =>
       Array.from({ length: cols }, (_, colIndex) => ({
-        value:
-          rowIndex === 0
-            ? letters[colIndex]
-            : colIndex * 15 + (rowIndex - 1) * 5 + 1,
+        value: rowIndex === 0 ? letters[colIndex] : "",
         marked: rowIndex === 0, // Mark the first row as already marked (for labels)
       }))
     );
@@ -126,15 +123,15 @@ export default function Bingo() {
 
   function initializePlays() {
     return [
-      { name: "EXPLOSION", points: 800, completed: false },
-      { name: "COMODÍN", points: 800, completed: false },
-      { name: "BINGO LOCO", points: 800, completed: false },
-      { name: "LINEA", points: 800, completed: false },
-      { name: "DOBLE LINEA", points: 800, completed: false },
-      { name: "TRIPLE LINEA V", points: 800, completed: false },
-      { name: "FIGURA", points: 800, completed: false },
-      { name: "LLENA", points: 1000, completed: false },
-      { name: "CONSUELO", points: 1000, completed: false },
+      // { name: "EXPLOSION", points: 800, completed: false },
+      // { name: "COMODÍN", points: 800, completed: false },
+      // { name: "BINGO LOCO", points: 800, completed: false },
+      // { name: "LINEA", points: 800, completed: false },
+      // { name: "DOBLE LINEA", points: 800, completed: false },
+      // { name: "TRIPLE LINEA V", points: 800, completed: false },
+      // { name: "FIGURA", points: 800, completed: false },
+      // { name: "LLENA", points: 1000, completed: false },
+      // { name: "CONSUELO", points: 1000, completed: false },
     ];
   }
 
@@ -299,7 +296,7 @@ export default function Bingo() {
               row.map((cell, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
-                  className={`p-0 text-center border-2 border-gray-300 rounded h-16 flex items-center justify-center ${
+                  className={`aspect-square text-center border-2 border-gray-300 rounded flex items-center justify-center ${
                     cell.marked && rowIndex !== 0 ? "bg-green-200" : "bg-white"
                   }`}
                   onClick={() => toggleCell(rowIndex, colIndex)}
@@ -336,6 +333,7 @@ export default function Bingo() {
           </div>
           <div className="mt-4 flex justify-center">
             <Button onClick={resetGrid} variant="outline">
+              <Trash className="h-4 w-4" />
               Limpiar Cartón
             </Button>
           </div>
@@ -356,7 +354,7 @@ export default function Bingo() {
                 variant="outline"
                 onClick={() => setIsEditing(!isEditing)}
               >
-                <Pencil className="mr-2 h-4 w-4" />{" "}
+                <Pencil className="h-4 w-4" />{" "}
                 {isEditing ? "Guardar" : "Editar"}
               </Button>
               <Button
@@ -364,13 +362,17 @@ export default function Bingo() {
                 onClick={addPlay}
                 disabled={plays.length >= 15}
               >
-                <Plus className="mr-2 h-4 w-4" /> Add Jugada
+                <Plus className="h-4 w-4" />
+                Jugadas
               </Button>
               <Button variant="outline" onClick={resetResetCount}>
-                <RefreshCw className="mr-2 h-4 w-4" /> Limpiar Jugadas
+                <RefreshCw className="h-4 w-4" /> Restaurar Jugadas
               </Button>
             </div>
           </div>
+          <span className="text-red-400 text-center">{`${
+            plays.length === 0 ? "No hay jugadas registradas" : ""
+          }`}</span>
         </CardHeader>
 
         <CardContent>
