@@ -411,24 +411,24 @@ export default function Bingo() {
               }`}</span>
             </div>
             <div className="mt-4 flex flex-wrap items-center justify-center">
-              <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  onClick={resetGridValue}
-                  variant="outline"
-                  className="flex items-center gap-2 bg-red-200"
-                >
-                  <Trash className="h-4 w-4" />
-                  Limpiar Cartón
-                </Button>
-                <Button
-                  onClick={resetGrid}
-                  variant="outline"
-                  className="flex items-center gap-2 bg-green-200"
-                >
-                  <Trash className="h-4 w-4" />
-                  Limpiar marcados
-                </Button>
-              </div>
+              {/* <div className="flex flex-wrap items-center gap-2"> */}
+              <Button
+                onClick={resetGridValue}
+                variant="outline"
+                className="flex items-center gap-2 mt-0 max-sm:mt-2  bg-red-200"
+              >
+                <Trash className="h-4 w-4" />
+                Limpiar Cartón
+              </Button>
+              <Button
+                onClick={resetGrid}
+                variant="outline"
+                className="flex items-center gap-2  ml-2  mt-0 max-sm:mt-2 bg-green-200"
+              >
+                <Trash className="h-4 w-4" />
+                Limpiar marcados
+              </Button>
+              {/* </div> */}
             </div>
           </CardContent>
         </Card>
