@@ -405,8 +405,13 @@ export default function Bingo() {
                 ))
               )}
             </div>
-            <div className="mt-4 flex items-center justify-between">
-              <div className="mt-4 flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-end">
+              <span className="font-semibold">{`Bolos restantes: ${
+                24 - marcadosCount
+              }`}</span>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center justify-center">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button
                   onClick={resetGridValue}
                   variant="outline"
@@ -418,16 +423,12 @@ export default function Bingo() {
                 <Button
                   onClick={resetGrid}
                   variant="outline"
-                  className="flex items-center gap-2 bg-green-200 ml-2"
+                  className="flex items-center gap-2 bg-green-200"
                 >
                   <Trash className="h-4 w-4" />
                   Limpiar marcados
                 </Button>
               </div>
-
-              <span className="font-semibold">{`Bolos restantes: ${
-                24 - marcadosCount
-              }`}</span>
             </div>
           </CardContent>
         </Card>
