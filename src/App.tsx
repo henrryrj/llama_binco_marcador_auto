@@ -52,6 +52,9 @@ export default function Bingo() {
     const savedCurrentDate = localStorage.getItem(
       `bingoCurrentDate_${selectedCarton}`
     );
+    const savedMarcadosCount = localStorage.getItem(
+      `bingoMarcadosCount_${selectedCarton}`
+    );
 
     if (savedGridData) setGridData(JSON.parse(savedGridData));
     if (savedPlays) setPlays(JSON.parse(savedPlays));
@@ -61,6 +64,7 @@ export default function Bingo() {
     if (savedCartonCost) setCartonCost(parseInt(savedCartonCost, 10));
     if (savedCartonGain) setCartonGain(parseInt(savedCartonGain, 10));
     if (savedCurrentDate) setCurrentDate(savedCurrentDate);
+    if (savedMarcadosCount) setMarcadosCount(parseInt(savedMarcadosCount, 10));
   }, [selectedCarton]);
 
   useEffect(() => {
@@ -106,6 +110,12 @@ export default function Bingo() {
   useEffect(() => {
     localStorage.setItem(`bingoCurrentDate_${selectedCarton}`, currentDate);
   }, [currentDate, selectedCarton]);
+  useEffect(() => {
+    localStorage.setItem(
+      `bingoMarcadosCount_${selectedCarton}`,
+      marcadosCount.toString()
+    );
+  }, [marcadosCount, selectedCarton]);
 
   useEffect(() => {
     localStorage.setItem("selectedCarton", selectedCarton);
@@ -158,6 +168,13 @@ export default function Bingo() {
         0
       );
     setMarcadosCount(markedCount - 5);
+    if (markedCount - 5 == 24) {
+      MySwal.fire(
+        "¡BINGOOOO!",
+        "FELICIDADES HAS HECHO CARTON LLENO.",
+        "success"
+      );
+    }
   }
 
   function resetGrid() {
@@ -195,7 +212,7 @@ export default function Bingo() {
           )
         );
         setCartonNumber("");
-
+        setMarcadosCount(0);
         MySwal.fire(
           "¡Cartón limpiado!",
           "El cartón ha sido reiniciado.",
