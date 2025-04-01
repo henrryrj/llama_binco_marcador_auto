@@ -6,6 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Pencil, Star, Plus, Trash, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 export default function Bingo() {
   const [selectedCarton, setSelectedCarton] = useState<string>(() => {
@@ -22,6 +26,7 @@ export default function Bingo() {
   const [bingoTitle, setBingoTitle] = useState("BINGO");
   const [cartonNumber, setCartonNumber] = useState("");
   const [resetCount, setResetCount] = useState(1);
+  const [marcadosCount, setMarcadosCount] = useState(0);
   const [cartonCost, setCartonCost] = useState(0); // Default cost
   const [cartonGain, setCartonGain] = useState(0); // Default gain
   const [currentDate, setCurrentDate] = useState(
@@ -146,6 +151,13 @@ export default function Bingo() {
       )
     );
     setGridData(newGridData);
+    const markedCount = newGridData
+      .flat()
+      .reduce(
+        (count, cell) => count + (cell.marked && cell.value !== "STAR" ? 1 : 0),
+        0
+      );
+    setMarcadosCount(markedCount - 5);
   }
 
   function resetGrid() {
@@ -159,6 +171,38 @@ export default function Bingo() {
     );
     setPlays(plays.map((jugada) => ({ ...jugada, completed: false })));
     setResetCount(resetCount + 1);
+    setMarcadosCount(0);
+  }
+  function resetGridValue() {
+    MySwal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción limpiará el cartón de bingo.",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Sí, limpiar",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((result: any) => {
+      if (result.isConfirmed) {
+        setGridData((prevGrid) =>
+          prevGrid.map((row, rowIndex) =>
+            row.map((cell) => ({
+              ...cell,
+              value: rowIndex !== 0 && cell.value !== "STAR" ? "" : cell.value,
+              marked: rowIndex === 0, // Mantiene marcado solo el encabezado
+            }))
+          )
+        );
+        setCartonNumber("");
+
+        MySwal.fire(
+          "¡Cartón limpiado!",
+          "El cartón ha sido reiniciado.",
+          "success"
+        );
+      }
+    });
   }
 
   function togglePlayCompletion(index: number) {
@@ -344,11 +388,29 @@ export default function Bingo() {
                 ))
               )}
             </div>
-            <div className="mt-4 flex justify-center">
-              <Button onClick={resetGrid} variant="outline">
-                <Trash className="h-4 w-4" />
-                Limpiar Cartón
-              </Button>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="mt-4 flex items-center justify-between">
+                <Button
+                  onClick={resetGridValue}
+                  variant="outline"
+                  className="flex items-center gap-2 bg-red-200"
+                >
+                  <Trash className="h-4 w-4" />
+                  Limpiar Cartón
+                </Button>
+                <Button
+                  onClick={resetGrid}
+                  variant="outline"
+                  className="flex items-center gap-2 bg-green-200 ml-2"
+                >
+                  <Trash className="h-4 w-4" />
+                  Limpiar marcados
+                </Button>
+              </div>
+
+              <span className="font-semibold">{`Bolos restantes: ${
+                24 - marcadosCount
+              }`}</span>
             </div>
           </CardContent>
         </Card>
